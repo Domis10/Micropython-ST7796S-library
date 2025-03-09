@@ -2,7 +2,7 @@ import machine
 import time
 
 class ST7796S:
-    def __init__(self, spi, dc, rst, cs, width=320, height=480):
+    def __init__(self, spi, dc, rst, cs, width=480, height=320):
         self.spi = spi
         self.dc = dc
         self.rst = rst
@@ -53,29 +53,12 @@ class ST7796S:
         self.write_cmd(0x3A)  # Interface Pixel Format
         self.write_data(0x55)  # 16 bits per pixel
 
+        # Set the display to Landscape mode (0xE8)
         self.write_cmd(0x36)  # MADCTL
-        self.write_data(0x00)  # Default rotation (Portrait)
+        self.write_data(0xE8)  # Landscape mode
 
         self.write_cmd(0x29)  # Display on
         time.sleep_ms(100)
-
-    def set_rotation(self, rotation):
-        """
-        Set the display rotation.
-        0: Portrait
-        1: Landscape
-        2: Portrait (upside down)
-        3: Landscape (upside down)
-        """
-        self.write_cmd(0x36)  # MADCTL
-        if rotation == 0:
-            self.write_data(0x00)  # Portrait
-        elif rotation == 1:
-            self.write_data(0x60)  # Landscape
-        elif rotation == 2:
-            self.write_data(0xC0)  # Portrait (upside down)
-        elif rotation == 3:
-            self.write_data(0xA0)  # Landscape (upside down)
 
     def set_window(self, x0, y0, x1, y1):
         self.write_cmd(0x2A)  # Column address set
@@ -116,7 +99,6 @@ class ST7796S:
         """
         for i, char in enumerate(text):
             self.draw_char(x + i * 8, y, char, color, bg_color)
-
     # 8x8 font data for uppercase, lowercase, digits, and punctuation
     font = {
         'A': [
@@ -738,7 +720,6 @@ class ST7796S:
             0b00001100,
             0b11111000,
             0b00000000
-        ]
         ],
         '.': [
             0b00000000,
@@ -821,5 +802,3 @@ class ST7796S:
             0b00000000
         ]
     }
-
-    return font_dict
