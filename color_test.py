@@ -1,11 +1,14 @@
 import machine
 import st7796s
+from machine import Pin, SPI
 
-# Initialize SPI and GPIO pins
-spi = machine.SPI(1, baudrate=40000000, polarity=0, phase=0)
-dc = machine.Pin(15, machine.Pin.OUT)
-rst = machine.Pin(16, machine.Pin.OUT)
-cs = machine.Pin(17, machine.Pin.OUT)
+# Initialize SPI
+spi = SPI(0, baudrate=40000000, sck=Pin(18), mosi=Pin(19))
+
+# Initialize the control pins
+cs = Pin(17, Pin.OUT)
+dc = Pin(16, Pin.OUT)
+rst = Pin(22, Pin.OUT)
 
 # Initialize the display
 display = st7796s.ST7796S(spi, dc, rst, cs)
